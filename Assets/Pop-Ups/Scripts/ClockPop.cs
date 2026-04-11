@@ -40,7 +40,9 @@ public class ClockPop : MonoBehaviour
         
         randomAngle1 = Random.Range(0f, 360f);
         randomAngle2 = Random.Range(0f, 360f);
-        randomAngle3 = Random.Range(0f, 360f);
+        randomAngle3 = Random.Range(0f, 360f); 
+
+        
     }
 
     // Update is called once per frame
