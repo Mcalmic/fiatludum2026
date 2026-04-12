@@ -42,6 +42,12 @@ public class GameManager : MonoBehaviour
         return batteryLevel;
     }
 
+    public void IncreaseBattery(float amount)
+    {
+        batteryLevel += amount;
+        batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
+    }
+
     public void SetLocking(bool isLocked)
     {
         monitorLocked = isLocked;

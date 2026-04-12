@@ -17,6 +17,7 @@ public class CaptchaPop : MonoBehaviour
     bool isClicked = false;
 
     GameManager gameManager;
+    AudioManager audioManager;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,6 +29,8 @@ public class CaptchaPop : MonoBehaviour
 
         gameManager = GameManager.instance;
         gameManager.SetLocking(true);
+
+        audioManager = AudioManager.instance;
     }
 
     // Update is called once per frame
@@ -58,6 +61,7 @@ public class CaptchaPop : MonoBehaviour
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
         gameManager.SetLocking(false);
+        audioManager.PlaySound("longjingle");
     }
 
     public void OnClick()
@@ -66,6 +70,7 @@ public class CaptchaPop : MonoBehaviour
         {
             isClicked = true;
             anim.SetTrigger("Clicked");
+            audioManager.PlaySound("jingle");
             slider1.gameObject.SetActive(true);
             slider2.gameObject.SetActive(true);
             slider3.gameObject.SetActive(true);

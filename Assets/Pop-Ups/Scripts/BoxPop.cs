@@ -7,9 +7,9 @@ public class BoxPop : MonoBehaviour
 {
     private int location1 = 0;
     private int location2 = 0;
+    private int location3 = 0;
 
-    public bool item1Found = false;
-    public bool item2Found = false;
+    public int boxesOpened = 0;
 
     [SerializeField] List<ClickyBox> boxes;
     
@@ -19,6 +19,7 @@ public class BoxPop : MonoBehaviour
     RectTransform rt;
 
     GameManager gameManager;
+    AudioManager audioManager;
 
     // public float testX = 0f;
     // public float testY = 0f;
@@ -33,9 +34,14 @@ public class BoxPop : MonoBehaviour
         
         location1 = Random.Range(0, boxes.Count);
         location2 = Random.Range(0, boxes.Count);
+        location3 = Random.Range(0, boxes.Count);
         while (location2 == location1)
         {
             location2 = Random.Range(0, boxes.Count);
+        }
+        while (location3 == location1 || location3 == location2)
+        {
+            location3 = Random.Range(0, boxes.Count);
         }
 
 
@@ -43,53 +49,106 @@ public class BoxPop : MonoBehaviour
         gameManager = GameManager.instance;
         gameManager.SetLocking(true);
 
-        //Debug.Log("Locations: " + location1 + ", " + location2);
+        audioManager = AudioManager.instance;
+
+        //Debug.Log("Locations: " + location1 + ", " + location2 + ", " + location3);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (item1Found && item2Found)
-        {
-            //wait a second before destroying to let the animation play
-            StartCoroutine(DestroyAfterDelay());
-        }
-
         //rt.anchoredPosition = new Vector2(testX, testY);
     }
 
     IEnumerator DestroyAfterDelay()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.5f);
         Destroy(gameObject);
         gameManager.SetLocking(false);
+        audioManager.PlaySound("longjingle");
     }
 
     public void OnClick()
     {
-        if (!isClicked)
+        if (isClicked) return;
+        
+        isClicked = true;
+        anim.SetTrigger("Clicked");
+        audioManager.PlaySound("jingle");
+
+        for (int i = 0; i < boxes.Count; i++)
         {
-            isClicked = true;
-            anim.SetTrigger("Clicked");
-            for (int i = 0; i < boxes.Count; i++)
+            boxes[i].gameObject.SetActive(true);
+            
+            if (i == location1 || i == location2 || i == location3)
             {
-                boxes[i].gameObject.SetActive(true);
-                if (i == location1)
+                boxes[i].hasItem = "full"; 
+            }
+            else
+            {
+                boxes[i].hasItem = "none";
+            }
+        }
+    }
+
+    public void CheckForWin()
+    {
+        // Only run the check if all boxes are full
+        if (boxesOpened < 9) return;
+
+        bool won = false;
+
+        for (int i = 0; i < boxes.Count; i++)
+        {
+            string currentType = boxes[i].hasItem;
+            if (currentType == "empty") continue;
+
+            // Check Horizontal (Indices 0, 3, 6)
+            if (i % 3 == 0)
+            {
+                if (boxes[i + 1].hasItem == currentType && boxes[i + 2].hasItem == currentType)
                 {
-                    boxes[i].hasItem = "one";
-                }
-                else if (i == location2)
-                {
-                    boxes[i].hasItem = "two";
-                }
-                else
-                {
-                    boxes[i].hasItem = "none";
+                    won = true;
                 }
             }
-            return;
+
+            // Check Vertical (Indices 0, 1, 2)
+            if (i < 3)
+            {
+                if (boxes[i + 3].hasItem == currentType && boxes[i + 6].hasItem == currentType)
+                {
+                    won = true;
+                }
+            }
+
+            // Check Diagonal Right Down (Index 0)
+            if (i == 0)
+            {
+                if (boxes[4].hasItem == currentType && boxes[8].hasItem == currentType)
+                {
+                    won = true;
+                }
+            }
+
+            // Check Diagonal Left Down (Index 2)
+            if (i == 2)
+            {
+                if (boxes[4].hasItem == currentType && boxes[6].hasItem == currentType)
+                {
+                    won = true;
+                }
+            }
+
+            if (won) break; 
         }
+
+        if (won)
+        {
+            GameManager.instance.IncreaseBattery(5f);
+        }
+
+        // Always destroy the pop-up once 9 boxes are opened, win or lose
+        StartCoroutine(DestroyAfterDelay());
     }
 }

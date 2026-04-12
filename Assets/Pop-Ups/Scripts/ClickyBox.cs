@@ -4,40 +4,42 @@ public class ClickyBox : MonoBehaviour
 {
     
     public string hasItem = "none";
+
+    private bool isOpen = false;
     
     Animator anim;
+
+    AudioManager audioManager;
     [SerializeField] BoxPop parentPopUp;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         anim = GetComponent<Animator>();
+        audioManager = AudioManager.instance;
     }
 
     public void OpenBox()
     {
+        if (isOpen) return;
+        isOpen = true;
+
+        parentPopUp.boxesOpened++;
+        
         if (hasItem == "none")
         {
             //Debug.Log("You found: " + hasItem);
             anim.SetTrigger("Open");
+            audioManager.PlaySound("negative");
             hasItem = "empty";
-            return;
         }
-        else if (hasItem == "one")
+        else
         {
             //Debug.Log("You found: " + hasItem);
             anim.SetTrigger("Has");
-            hasItem = "empty";
-            parentPopUp.item1Found = true;
-            return;
+            audioManager.PlaySound("positive");
         }
-        else if (hasItem == "two")
-        {
-            //Debug.Log("You found: " + hasItem);
-            anim.SetTrigger("Has");
-            hasItem = "empty";
-            parentPopUp.item2Found = true;
-            return;
-        }
+
+        parentPopUp.CheckForWin();
     }
 }

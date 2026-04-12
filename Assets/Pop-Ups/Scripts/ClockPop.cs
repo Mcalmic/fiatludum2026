@@ -28,6 +28,7 @@ public class ClockPop : MonoBehaviour
     RectTransform rt;
 
     GameManager gameManager;
+    AudioManager audioManager;
 
     // public float testX = 0f;
     // public float testY = 0f;
@@ -46,6 +47,8 @@ public class ClockPop : MonoBehaviour
 
         gameManager = GameManager.instance;
         gameManager.SetLocking(true);
+
+        audioManager = AudioManager.instance;
     }
 
     // Update is called once per frame
@@ -64,6 +67,7 @@ public class ClockPop : MonoBehaviour
             //Debug.Log("All regions successfully clicked! Closing pop-up.");
             Destroy(gameObject);
             gameManager.SetLocking(false);
+            audioManager.PlaySound("longjingle");
 
         }
 
@@ -91,6 +95,7 @@ public class ClockPop : MonoBehaviour
         {
             isClicked = true;
             anim.SetTrigger("Clicked");
+            audioManager.PlaySound("jingle");
             region1.SetActive(true);
             region2.SetActive(true);
             region3.SetActive(true);
@@ -106,25 +111,39 @@ public class ClockPop : MonoBehaviour
         if (angle >= (randomAngle1 - successThreshold) % 360f && angle <= (randomAngle1 + successThreshold) % 360f)
         {
             //Debug.Log("Region 1 clicked!");
-            region1.SetActive(false);
-            region1Clicked = true;
+            if (!region1Clicked)
+            {
+                region1.SetActive(false);
+                region1Clicked = true;
+                audioManager.PlaySound("positive");
+            }
+            
         }
         else if (angle >= (randomAngle2 - successThreshold) % 360f && angle <= (randomAngle2 + successThreshold) % 360f)
         {
             //Debug.Log("Region 2 clicked!");
-            region2.SetActive(false);
-            region2Clicked = true;
+            if (!region2Clicked)
+            {
+                region2.SetActive(false);
+                region2Clicked = true;
+                audioManager.PlaySound("positive");
+            }
         }
         else if (angle >= (randomAngle3 - successThreshold) % 360f && angle <= (randomAngle3 + successThreshold) % 360f)
         {
             //Debug.Log("Region 3 clicked!");
-            region3.SetActive(false);
-            region3Clicked = true;
+            if (!region3Clicked)
+            {
+                region3.SetActive(false);
+                region3Clicked = true;
+                audioManager.PlaySound("positive");
+            }
         }
         else
         {
-            Debug.Log("Missed! Try again.");
-            anim.SetTrigger("Failure");
+            //Debug.Log("Missed! Try again.");
+            //anim.SetTrigger("Failure");
+            audioManager.PlaySound("negative");
         }
     }
 }
