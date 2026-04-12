@@ -14,12 +14,11 @@ public class BoxPop : MonoBehaviour
     [SerializeField] List<ClickyBox> boxes;
     
     bool isClicked = false;
-    bool region1Clicked = false;
-    bool region2Clicked = false;
-    bool region3Clicked = false;
 
     Animator anim;
     RectTransform rt;
+
+    GameManager gameManager;
 
     // public float testX = 0f;
     // public float testY = 0f;
@@ -41,7 +40,10 @@ public class BoxPop : MonoBehaviour
 
 
 
-        Debug.Log("Locations: " + location1 + ", " + location2);
+        gameManager = GameManager.instance;
+        gameManager.SetLocking(true);
+
+        //Debug.Log("Locations: " + location1 + ", " + location2);
         
     }
 
@@ -62,6 +64,7 @@ public class BoxPop : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+        gameManager.SetLocking(false);
     }
 
     public void OnClick()

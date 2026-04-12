@@ -27,6 +27,8 @@ public class ClockPop : MonoBehaviour
     Animator anim;
     RectTransform rt;
 
+    GameManager gameManager;
+
     // public float testX = 0f;
     // public float testY = 0f;
     
@@ -42,7 +44,8 @@ public class ClockPop : MonoBehaviour
         randomAngle2 = Random.Range(0f, 360f);
         randomAngle3 = Random.Range(0f, 360f); 
 
-        
+        gameManager = GameManager.instance;
+        gameManager.SetLocking(true);
     }
 
     // Update is called once per frame
@@ -60,6 +63,8 @@ public class ClockPop : MonoBehaviour
         {
             //Debug.Log("All regions successfully clicked! Closing pop-up.");
             Destroy(gameObject);
+            gameManager.SetLocking(false);
+
         }
 
         // hand.GetComponent<Image>().color = Color.red;

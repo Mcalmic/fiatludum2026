@@ -19,7 +19,8 @@ public class Meteor : MonoBehaviour
 
     public void Explode()
     {
-        spawner.OnMeteorDestroyed();
+        //just now commented this out bc it was causing compiler errors :333
+        //spawner.OnMeteorDestroyed();
         Destroy(gameObject);
     }
 }
