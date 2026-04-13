@@ -6,7 +6,13 @@ public class PopUpManager : MonoBehaviour
 {
     
     [SerializeField] List<GameObject> popUpPrefabs;
-    [SerializeField] GameObject oxygenPopUpPrefab;
+    [SerializeField] GameObject oxygenStopPrefab;
+    [SerializeField] GameObject oxygenWarningPrefab;
+    [SerializeField] GameObject shieldStoppedPrefab;
+    [SerializeField] GameObject autoPilotStoppedPrefab;
+
+    GameManager gameManager;
+
 
     //scales over time, set by GameManager
     public int popUpIntensity = 1;
@@ -16,7 +22,36 @@ public class PopUpManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManager = GameManager.instance;
+        StartCoroutine(OxygenWarningLoop());
         StartCoroutine(PopUpLoop());
+    }
+
+    IEnumerator OxygenWarningLoop()
+    {
+        while (true)
+        {
+            if (gameManager.oxygenLevel <= 50f)
+            {
+                Instantiate(oxygenWarningPrefab, transform);
+            }            
+            yield return new WaitForSeconds(10f); // Check every 5 seconds
+        }
+    }
+
+    public void SpawnOxygenStop()
+    {
+        Instantiate(oxygenStopPrefab, transform);
+    }
+
+    public void SpawnShieldStopped()
+    {
+        Instantiate(shieldStoppedPrefab, transform);
+    }
+
+    public void SpawnAutoPilotStopped()
+    {
+        Instantiate(autoPilotStoppedPrefab, transform);
     }
 
     IEnumerator PopUpLoop()

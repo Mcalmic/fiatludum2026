@@ -285,6 +285,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feef05438b8e3fd46bf250c95513eb64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  oxygenDrainRate: 0.1
+  oxygenRegenRate: 0.2
+  oxygenLevel: 100
+  oxygencost: 0.1
+  OxygenIcon: {fileID: 0}
+  vignette: {fileID: 0}
+  chromaticAberration: {fileID: 0}
+  navPanel: {fileID: 0}
+  mapPanel: {fileID: 0}
+  medicalPanel: {fileID: 0}
+  progressPanel: {fileID: 0}
+  batteryBar: {fileID: 0}
 --- !u!4 &168883228
 Transform:
   m_ObjectHideFlags: 0
@@ -611,7 +623,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -651,7 +663,10 @@ MonoBehaviour:
   - {fileID: 3500378080577753002, guid: 2ad0ed3ddf069a646874a7e6af487abd, type: 3}
   - {fileID: 2451703076134949010, guid: f1f12dac6c13ea14db07d634bd87712c, type: 3}
   - {fileID: 5319042799812608305, guid: bd9fb69e35db9134d9274d14191991fb, type: 3}
-  oxygenPopUpPrefab: {fileID: 0}
+  oxygenStopPrefab: {fileID: 0}
+  oxygenWarningPrefab: {fileID: 0}
+  shieldStoppedPrefab: {fileID: 0}
+  autoPilotStoppedPrefab: {fileID: 0}
   popUpIntensity: 1
   baseMinDelay: 5
   baseMaxDelay: 15

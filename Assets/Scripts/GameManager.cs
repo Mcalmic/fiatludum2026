@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,9 +17,11 @@ public class GameManager : MonoBehaviour
     private bool oxygenOn = true;
     public float oxygenDrainRate = 0.1f;
     public float oxygenRegenRate = 0.2f;
-    private float oxygenLevel = 100f;
+    public float oxygenLevel = 100f;
     public float oxygencost = 0.1f;
     [SerializeField] GameObject OxygenIcon;
+    [SerializeField] Vignette vignette;
+    [SerializeField] ChromaticAberration chromaticAberration;
 
     [SerializeField] GameObject navPanel;
     [SerializeField] GameObject mapPanel;
@@ -70,6 +74,8 @@ public class GameManager : MonoBehaviour
             oxygenLevel -= oxygenDrainRate * Time.deltaTime;
         }
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
+        vignette.smoothness.value = (1f - (oxygenLevel / 100f));
+        chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
     }
 
     public float GetBatteryLevel()
