@@ -3,14 +3,15 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     private bool monitorLocked = false;
 
     private float batteryLevel = 100f;
-
     private float batteryDrainRate = 0f;
+    [SerializeField] TextMeshProUGUI batteryUsageText;
 
     private int screen = 0; //0 = navigation, 1 = map, 2 = medical, 3 = progress
 
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
         batteryBar.transform.localScale = new Vector3(batteryLevel / 100f, 1f, 1f);
         batteryBar.transform.GetComponent<Image>().color = Color.Lerp(Color.red, Color.green, batteryLevel / 100f);
+        batteryUsageText.text = (batteryDrainRate * 60).ToString("F1") + "%/min";
 
         //oxygen updates
         if (oxygenOn)
