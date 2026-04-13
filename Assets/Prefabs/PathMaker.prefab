@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathDefinition
   waypoints:
-  - {x: 30, y: -50, z: 0}
-  - {x: 10, y: 0, z: 0}
-  - {x: 50, y: 20, z: 0}
+  - {x: 100, y: -150, z: 0}
+  - {x: 20, y: -30, z: 0}
+  - {x: 50, y: 100, z: 0}
   gizmoNodeRadius: 0.3
   dotPrefab: {fileID: 6950893435492604248, guid: 855f4743aa0b00447aa802362837d3f5, type: 3}
   dotSpacing: 0.5
