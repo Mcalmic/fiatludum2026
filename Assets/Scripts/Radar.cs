@@ -6,6 +6,7 @@ public class Radar : MonoBehaviour
     [SerializeField] GameObject RadarPingPrefab;
 
     GameManager gameManager;
+    [SerializeField]AudioManager audioManager;
 
     void Start()
     {
@@ -19,6 +20,7 @@ public class Radar : MonoBehaviour
         if (gameManager.GetLocking()) return;
 
         Instantiate(RadarPingPrefab, transform);
+        audioManager.PlaySound("radar");
         gameManager.IncreaseBattery(-1f);
 
     }

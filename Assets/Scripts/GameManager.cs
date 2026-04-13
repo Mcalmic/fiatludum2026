@@ -4,10 +4,14 @@ using System.Collections;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
     private bool monitorLocked = false;
+    public bool monitorOpen = false;
+
+    [SerializeField] GameObject MonitorPanel;
 
     public float distanceLeft = 1000;
 
@@ -23,18 +27,20 @@ public class GameManager : MonoBehaviour
     public float oxygenLevel = 100f;
     public float oxygencost = 0.1f;
     [SerializeField] GameObject OxygenIcon;
-    [SerializeField] Vignette vignette;
-    [SerializeField] ChromaticAberration chromaticAberration;
+
+    [SerializeField] private Volume globalVolume;
+    private Vignette vignette;
+    private ChromaticAberration chromaticAberration;
 
     [SerializeField] GameObject navPanel;
     [SerializeField] GameObject mapPanel;
     [SerializeField] GameObject medicalPanel;
-    [SerializeField] GameObject progressPanel;
     [SerializeField] private EnergyBar batteryBar;
     [SerializeField] private float batteryBarUpdateInterval = 0.5f;
     private float batteryBarTimer = 0f;
 
     public static GameManager instance;
+    [SerializeField] private AudioManager audioManager;
     
     public int intensity = 1;
     
@@ -51,11 +57,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        if (globalVolume.profile.TryGet<Vignette>(out var v))
+        {
+            vignette = v;
+        }
+
+        if (globalVolume.profile.TryGet<ChromaticAberration>(out var ca))
+        {
+            chromaticAberration = ca;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         //distance update
         distanceLeft -= Time.deltaTime * (1f + intensity * 0.5f);
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            monitorOpen = !monitorOpen;
+            audioManager.PlaySound("click");
+            //set all children of monitor panel to active if monitorOpen is true, otherwise set them to inactive
+            
+        }
+        foreach (Transform child in MonitorPanel.transform)
+        {
+            child.gameObject.SetActive(monitorOpen);
+        }
         
         //battery updates
         if (oxygenOn)
@@ -87,8 +118,8 @@ public class GameManager : MonoBehaviour
             oxygenLevel -= oxygenDrainRate * Time.deltaTime;
         }
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
-        //vignette.smoothness.value = (1f - (oxygenLevel / 100f));
-        //chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
+        vignette.smoothness.value = (1f - (oxygenLevel / 100f));
+        chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
     }
 
     public float GetBatteryLevel()
@@ -127,7 +158,6 @@ public class GameManager : MonoBehaviour
         navPanel.SetActive(screen == 0);
         mapPanel.SetActive(screen == 1);
         medicalPanel.SetActive(screen == 2);
-        progressPanel.SetActive(screen == 3);
     }
 
     public void ToggleOxygen()
