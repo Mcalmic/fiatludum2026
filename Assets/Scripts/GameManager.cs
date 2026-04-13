@@ -118,8 +118,8 @@ public class GameManager : MonoBehaviour
             oxygenLevel -= oxygenDrainRate * Time.deltaTime;
         }
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
-        vignette.smoothness.value = (1f - (oxygenLevel / 100f));
-        chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
+        vignette.smoothness.value = Mathf.Clamp(1f - (oxygenLevel / 100f) + .2f, 0f, 1f);
+        chromaticAberration.intensity.value = Mathf.Clamp((1f - (oxygenLevel / 100f) + .2f) * .2f, 0f, 1f);
     }
 
     public float GetBatteryLevel()
