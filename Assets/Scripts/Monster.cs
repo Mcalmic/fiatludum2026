@@ -14,11 +14,13 @@ public class Monster : MonoBehaviour
     Image monsterImage;
 
     GameManager gameManager;
+    PopUpManager popUpManager;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         gameManager = GameManager.instance;
+        popUpManager = PopUpManager.instance;
         monsterImage = GetComponent<Image>();
     }
 
@@ -27,7 +29,13 @@ public class Monster : MonoBehaviour
     {
         if (attackInterval <= 0)
         {
-            
+            if (currentLocation == possiblePoints[3])
+            {
+                gameManager.SabotageOxygen();
+                popUpManager.SpawnOxygenStop();
+
+            }
+
             attackInterval = Random.Range(8f, 12f);
         }
         else
@@ -50,7 +58,7 @@ public class Monster : MonoBehaviour
     {
         if (currentLocation == null) return;
 
-        int distance = Random.Range(1, 4);
+        int distance = Random.Range(1, 1 + gameManager.intensity);
 
         for (int i = 0; i < distance; i++)
         {
@@ -77,5 +85,20 @@ public class Monster : MonoBehaviour
         monsterImage.enabled = true;
         yield return new WaitForSeconds(2f);
         monsterImage.enabled = false;
+    }
+
+    public void GetReset()
+    {
+        StartCoroutine(Reset());
+    }
+
+    IEnumerator Reset()
+    {
+        attackInterval = 10f;
+        moveInterval = 5f;
+        
+        currentLocation = possiblePoints[10];
+        transform.position = currentLocation.pointTransform.position;
+        yield return new WaitForSeconds(10f);
     }
 }

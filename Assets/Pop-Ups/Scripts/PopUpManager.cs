@@ -13,6 +13,7 @@ public class PopUpManager : MonoBehaviour
 
     GameManager gameManager;
 
+    public static PopUpManager instance;
 
     //scales over time, set by GameManager
     public int popUpIntensity = 1;
@@ -25,6 +26,8 @@ public class PopUpManager : MonoBehaviour
         gameManager = GameManager.instance;
         StartCoroutine(OxygenWarningLoop());
         StartCoroutine(PopUpLoop());
+
+        instance = this;
     }
 
     IEnumerator OxygenWarningLoop()
