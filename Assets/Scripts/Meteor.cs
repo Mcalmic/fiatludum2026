@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
 public class Meteor : MonoBehaviour
 {
 
     private Rigidbody2D rb;
     private MeteorSpawner spawner;
+    public bool hasHitPlayer = false;
 
     private void Awake()
     {
@@ -16,6 +18,13 @@ public class Meteor : MonoBehaviour
     {
         spawner = s;
         rb.linearVelocity = velocity;
+        StartCoroutine(LifetimeCoroutine());
+    }
+
+    private IEnumerator LifetimeCoroutine()
+    {
+        yield return new WaitForSeconds(20f);
+        Explode();
     }
 
     public void Explode()

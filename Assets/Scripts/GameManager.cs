@@ -28,7 +28,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject mapPanel;
     [SerializeField] GameObject medicalPanel;
     [SerializeField] GameObject progressPanel;
-    [SerializeField] GameObject batteryBar;
+    [SerializeField] private EnergyBar batteryBar;
+    [SerializeField] private float batteryBarUpdateInterval = 0.5f;
+    private float batteryBarTimer = 0f;
 
     public static GameManager instance;
     
@@ -62,8 +64,12 @@ public class GameManager : MonoBehaviour
 
         batteryLevel -= batteryDrainRate * Time.deltaTime;
         batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
-        batteryBar.transform.localScale = new Vector3(batteryLevel / 100f, 1f, 1f);
-        batteryBar.transform.GetComponent<Image>().color = Color.Lerp(Color.red, Color.green, batteryLevel / 100f);
+        batteryBarTimer -= Time.deltaTime;
+        if (batteryBarTimer <= 0f)
+        {
+            batteryBar.SetValue(batteryLevel / 100f);
+            batteryBarTimer = batteryBarUpdateInterval;
+        }
         batteryUsageText.text = (batteryDrainRate * 60).ToString("F1") + "%/min";
 
         //oxygen updates
@@ -76,8 +82,8 @@ public class GameManager : MonoBehaviour
             oxygenLevel -= oxygenDrainRate * Time.deltaTime;
         }
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
-        vignette.smoothness.value = (1f - (oxygenLevel / 100f));
-        chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
+        //vignette.smoothness.value = (1f - (oxygenLevel / 100f));
+        //chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
     }
 
     public float GetBatteryLevel()
@@ -89,6 +95,13 @@ public class GameManager : MonoBehaviour
     {
         batteryLevel += amount;
         batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
+    }
+
+    public void DrainBattery(float amount)
+    {
+        batteryLevel -= amount;
+        batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
+        batteryBar.SetValue(batteryLevel / 100f);
     }
 
     public void SetLocking(bool isLocked)

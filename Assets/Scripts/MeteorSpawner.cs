@@ -5,6 +5,7 @@ public class MeteorSpawner : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform player;
+    [SerializeField] private Rigidbody2D playerRb;
     [SerializeField] private List<GameObject> meteorPrefabs = new List<GameObject>();
 
     [Header("Spawn Area")]
@@ -27,11 +28,13 @@ public class MeteorSpawner : MonoBehaviour
             timer = 0f;
             TrySpawn();
         }
+
     }
 
     [Header("Meteor Motion")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 4f;
+    [SerializeField] private float predictionTime = 2f;
 
     private void TrySpawn()
     {
@@ -46,7 +49,9 @@ public class MeteorSpawner : MonoBehaviour
         GameObject prefab = meteorPrefabs[Random.Range(0, meteorPrefabs.Count)];
         GameObject meteorObj = Instantiate(prefab, spawnPos, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)));
         Meteor meteor = meteorObj.GetComponent<Meteor>();
-        Vector2 velocity = Random.insideUnitCircle.normalized * Random.Range(minSpeed, maxSpeed);
+        Vector2 predictedPos = (Vector2)player.position + (playerRb != null ? playerRb.linearVelocity * predictionTime : Vector2.zero);
+        Vector2 toPlayer = (predictedPos - spawnPos).normalized;
+        Vector2 velocity = toPlayer * Random.Range(minSpeed, maxSpeed);
         meteor.Initialize(this, velocity);
         activeMeteors.Add(meteor);
         currentCount++;

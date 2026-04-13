@@ -10,9 +10,11 @@ public class ShipController : MonoBehaviour
 
     [SerializeField] private PathDefinition path;
     [SerializeField] private float shipSpeed = 5f;
+    [SerializeField] private float thrustForce = 50f;
     [SerializeField] private float waypointReachDistance = 0.5f;
     [SerializeField] private float autopilotSteerSpeed = 5f;
     [SerializeField] private float manualSteerSpeed = 5f;
+    [SerializeField] private float meteorDamage = 20f;
 
     [Header("Click To Move")]
     [SerializeField] private Camera cam;
@@ -26,6 +28,7 @@ public class ShipController : MonoBehaviour
     [SerializeField] private Image navigationButtonImage;
     [SerializeField] private Image autopilotButtonImage;
     [SerializeField] private Image shieldButtonImage;
+
 
 
     [Header("Shield")]
@@ -118,6 +121,16 @@ public class ShipController : MonoBehaviour
             shieldButtonImage.color = shieldEnabled ? Color.green : Color.white;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<Meteor>() != null)
+        {   
+            if(collision.gameObject.GetComponent<Meteor>().hasHitPlayer) return;
+            collision.gameObject.GetComponent<Meteor>().hasHitPlayer = true;
+            GameManager.instance?.DrainBattery(meteorDamage);
+        }
+    }
+
     public void OnClick(InputValue value)
     {
         if (autopilotEnabled) return;
@@ -148,14 +161,17 @@ public class ShipController : MonoBehaviour
                 hasClickTarget = false;
         }
 
-        rb.linearVelocity = (Vector2)transform.up * shipSpeed;
+        if (rb.linearVelocity.magnitude < shipSpeed)
+            rb.AddForce((Vector2)transform.up * thrustForce);
     }
 
     private void FollowPath()
     {
         Vector3 target = path.GetWaypoint(currentWaypointIndex);
         SteerToward(target, autopilotSteerSpeed);
-        rb.linearVelocity = (Vector2)transform.up * shipSpeed;
+
+        if (rb.linearVelocity.magnitude < shipSpeed)
+            rb.AddForce((Vector2)transform.up * thrustForce);
 
         if (Vector2.Distance(rb.position, target) <= waypointReachDistance)
         {
