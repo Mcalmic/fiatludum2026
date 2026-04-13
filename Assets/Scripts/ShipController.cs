@@ -76,6 +76,7 @@ public class ShipController : MonoBehaviour
         weaponsEnabled = !weaponsEnabled;
         navigationEnabled = false;
         shieldEnabled = false;
+        if (shieldObject != null) shieldObject.SetActive(shieldEnabled);
         RefreshModeButtonColors();
     }
 
@@ -92,8 +93,6 @@ public class ShipController : MonoBehaviour
         shieldEnabled = !shieldEnabled;
         weaponsEnabled = false;
         if (shieldObject != null) shieldObject.SetActive(shieldEnabled);
-        if (shieldButtonImage != null)
-            shieldButtonImage.color = shieldEnabled ? Color.green : Color.white;
         RefreshModeButtonColors();
     }
 
@@ -101,9 +100,6 @@ public class ShipController : MonoBehaviour
     {
         autopilotEnabled = !autopilotEnabled;
         navigationEnabled = false;
-        weaponsEnabled = false;
-        shieldEnabled = false;
-        if (shieldObject != null) shieldObject.SetActive(false);
         hasClickTarget = false;
         clickLine.enabled = false;
         RefreshModeButtonColors();
@@ -136,7 +132,6 @@ public class ShipController : MonoBehaviour
         if (autopilotEnabled) return;
         if (!value.isPressed) return;
         if (!navigationEnabled) return;
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         Vector2 screenPos = Mouse.current.position.ReadValue();
         clickTarget = cam.ScreenToWorldPoint(screenPos);

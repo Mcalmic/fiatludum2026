@@ -35,8 +35,6 @@ public class ExplosionController : MonoBehaviour
         Debug.Log("Processing attack...");
         if (ShipController.instance == null || !ShipController.instance.WeaponsEnabled) return;
         Debug.Log("Weapons enabled, executing attack...");
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
-        Debug.Log("Pointer is not over UI, executing attack...");
 
         if (Time.time < lastAttackTime + attackCooldown) return;
 
