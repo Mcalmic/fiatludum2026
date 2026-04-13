@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class ShipController : MonoBehaviour
@@ -42,6 +43,9 @@ public class ShipController : MonoBehaviour
     private Vector2 clickTarget = Vector2.zero;
     private bool hasClickTarget = false;
     private bool shieldEnabled = false;
+
+    //STUFF ANDREW ADDED FOR UI TO WORK:
+    [SerializeField] private RectTransform uiViewRect;
 
     private void Awake()
     {
@@ -129,13 +133,42 @@ public class ShipController : MonoBehaviour
 
     public void OnClick(InputValue value)
     {
+        // if (autopilotEnabled) return;
+        // if (!value.isPressed) return;
+        // if (!navigationEnabled) return;
+
+        // Vector2 screenPos = Mouse.current.position.ReadValue();
+        // clickTarget = cam.ScreenToWorldPoint(screenPos);
+        // hasClickTarget = true;
+
         if (autopilotEnabled) return;
         if (!value.isPressed) return;
         if (!navigationEnabled) return;
 
         Vector2 screenPos = Mouse.current.position.ReadValue();
-        clickTarget = cam.ScreenToWorldPoint(screenPos);
-        hasClickTarget = true;
+
+        // 1. Convert the screen click into a local coordinate inside your UI element
+        // Note: If your Canvas is set to "Screen Space - Camera", replace 'null' with your UI Camera.
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(uiViewRect, screenPos, null, out Vector2 localPoint))
+        {
+            // 2. Check if the click was actually inside the boundaries of the UI image
+            if (uiViewRect.rect.Contains(localPoint))
+            {
+                // 3. Normalize the coordinate to a 0.0 - 1.0 scale (Viewport Space)
+                // This math works regardless of where your UI pivot is set.
+                float normalizedX = (localPoint.x - uiViewRect.rect.x) / uiViewRect.rect.width;
+                float normalizedY = (localPoint.y - uiViewRect.rect.y) / uiViewRect.rect.height;
+                Vector2 viewportPoint = new Vector2(normalizedX, normalizedY);
+
+                // 4. Use the Camera's ViewportToWorldPoint instead of ScreenToWorldPoint
+                clickTarget = cam.ViewportToWorldPoint(viewportPoint);
+                
+                // Optional: Flatten the Z axis if this is a 2D game
+                //clickTarget.z = 0f; 
+                
+                hasClickTarget = true;
+            }
+        }
     }
 
     private void FixedUpdate()
