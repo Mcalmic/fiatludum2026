@@ -666,10 +666,10 @@ MonoBehaviour:
   - {fileID: 3500378080577753002, guid: 2ad0ed3ddf069a646874a7e6af487abd, type: 3}
   - {fileID: 2451703076134949010, guid: f1f12dac6c13ea14db07d634bd87712c, type: 3}
   - {fileID: 5319042799812608305, guid: bd9fb69e35db9134d9274d14191991fb, type: 3}
-  oxygenStopPrefab: {fileID: 0}
-  oxygenWarningPrefab: {fileID: 0}
-  shieldStoppedPrefab: {fileID: 0}
-  autoPilotStoppedPrefab: {fileID: 0}
+  oxygenStopPrefab: {fileID: 4655477583044461448, guid: a81f0261c61ba6a4a8e9e39907b0375b, type: 3}
+  oxygenWarningPrefab: {fileID: 8097619374884949404, guid: cdbaf330b64da844785d999442998ff0, type: 3}
+  shieldStoppedPrefab: {fileID: 6039466351447021232, guid: c057568d013a7464482d8a9aeab91d7f, type: 3}
+  autoPilotStoppedPrefab: {fileID: 9169910350679276352, guid: 52c6991d4ae922a4ea6ea7b33dcbace6, type: 3}
   popUpIntensity: 1
   baseMinDelay: 10
   baseMaxDelay: 20
