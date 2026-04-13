@@ -30,7 +30,7 @@ public class BoxPop : MonoBehaviour
         anim = GetComponent<Animator>();
 
         rt = GetComponent<RectTransform>();
-        rt.anchoredPosition = new Vector2(Random.Range(0, 650f), Random.Range(-300f, 0f));
+        rt.anchoredPosition = new Vector2(Random.Range(37, 609f), Random.Range(-277f, -23f));
         
         location1 = Random.Range(0, boxes.Count);
         location2 = Random.Range(0, boxes.Count);

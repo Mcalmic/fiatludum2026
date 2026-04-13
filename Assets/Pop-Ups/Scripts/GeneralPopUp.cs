@@ -11,18 +11,23 @@ public class GeneralPopUp : MonoBehaviour
     GameManager gameManager;
     AudioManager audioManager;
 
-    // public float testX = 0f;
-    // public float testY = 0f;
+    public float testX = 0f;
+    public float testY = 0f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rt = GetComponent<RectTransform>();
-        rt.anchoredPosition = new Vector2(Random.Range(0, 650f), Random.Range(-300f, 0f));
+        rt.anchoredPosition = new Vector2(Random.Range(30, 590f), Random.Range(-375f, -10f));
 
         gameManager = GameManager.instance;
         gameManager.SetLocking(true);
         
+    }
+
+    void Update()
+    {
+        rt.anchoredPosition = new Vector2(testX, testY);
     }
 
     IEnumerator DestroyAfterDelay()

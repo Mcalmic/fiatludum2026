@@ -39,7 +39,7 @@ public class ClockPop : MonoBehaviour
         anim = GetComponent<Animator>();
 
         rt = GetComponent<RectTransform>();
-        rt.anchoredPosition = new Vector2(Random.Range(0, 650f), Random.Range(-300f, 0f));
+        rt.anchoredPosition = new Vector2(Random.Range(37, 609f), Random.Range(-277f, -23f));
         
         randomAngle1 = Random.Range(0f, 360f);
         randomAngle2 = Random.Range(0f, 360f);
@@ -73,20 +73,20 @@ public class ClockPop : MonoBehaviour
 
         // hand.GetComponent<Image>().color = Color.red;
 
-        // if (angle >= randomAngle1 - successThreshold && angle <= randomAngle1 + successThreshold)
+        // if (angle >= randomAngle1  && angle <= randomAngle1 + successThreshold)
         // {
         //     hand.GetComponent<Image>().color = Color.green;
         // }
-        // else if (angle >= randomAngle2 - successThreshold && angle <= randomAngle2 + successThreshold)
+        // else if (angle >= randomAngle2  && angle <= randomAngle2 + successThreshold)
         // {
         //     hand.GetComponent<Image>().color = Color.green;
         // }
-        // else if (angle >= randomAngle3 - successThreshold && angle <= randomAngle3 + successThreshold)
+        // else if (angle >= randomAngle3  && angle <= randomAngle3 + successThreshold)
         // {
         //     hand.GetComponent<Image>().color = Color.green;
         // }
 
-        //rt.anchoredPosition = new Vector2(testX, testY);
+        // rt.anchoredPosition = new Vector2(testX, testY);
     }
 
     public void OnClick()
@@ -96,54 +96,54 @@ public class ClockPop : MonoBehaviour
             isClicked = true;
             anim.SetTrigger("Clicked");
             audioManager.PlaySound("jingle");
+            
+            // Show regions and hand
             region1.SetActive(true);
             region2.SetActive(true);
             region3.SetActive(true);
             hand.SetActive(true);
+
+            // Rotate visual regions to their targets
             region1.transform.localRotation = Quaternion.Euler(0f, 0f, -randomAngle1);
             region2.transform.localRotation = Quaternion.Euler(0f, 0f, -randomAngle2);
             region3.transform.localRotation = Quaternion.Euler(0f, 0f, -randomAngle3);
             return;
         }
 
-        
+        // We check the center of the success zone
+        // Since your zone starts at randomAngle and goes for successThreshold degrees:
+        float offset = successThreshold / 2f;
 
-        if (angle >= (randomAngle1 - successThreshold) % 360f && angle <= (randomAngle1 + successThreshold) % 360f)
+        if (!region1Clicked && IsInRegion(angle, randomAngle1 + offset))
         {
-            //Debug.Log("Region 1 clicked!");
-            if (!region1Clicked)
-            {
-                region1.SetActive(false);
-                region1Clicked = true;
-                audioManager.PlaySound("positive");
-            }
-            
+            region1.SetActive(false);
+            region1Clicked = true;
+            audioManager.PlaySound("positive");
         }
-        else if (angle >= (randomAngle2 - successThreshold) % 360f && angle <= (randomAngle2 + successThreshold) % 360f)
+        else if (!region2Clicked && IsInRegion(angle, randomAngle2 + offset))
         {
-            //Debug.Log("Region 2 clicked!");
-            if (!region2Clicked)
-            {
-                region2.SetActive(false);
-                region2Clicked = true;
-                audioManager.PlaySound("positive");
-            }
+            region2.SetActive(false);
+            region2Clicked = true;
+            audioManager.PlaySound("positive");
         }
-        else if (angle >= (randomAngle3 - successThreshold) % 360f && angle <= (randomAngle3 + successThreshold) % 360f)
+        else if (!region3Clicked && IsInRegion(angle, randomAngle3 + offset))
         {
-            //Debug.Log("Region 3 clicked!");
-            if (!region3Clicked)
-            {
-                region3.SetActive(false);
-                region3Clicked = true;
-                audioManager.PlaySound("positive");
-            }
+            region3.SetActive(false);
+            region3Clicked = true;
+            audioManager.PlaySound("positive");
         }
         else
         {
-            //Debug.Log("Missed! Try again.");
-            //anim.SetTrigger("Failure");
             audioManager.PlaySound("negative");
         }
+    }
+
+    private bool IsInRegion(float currentAngle, float targetCenterAngle)
+    {
+        // Mathf.DeltaAngle returns the shortest difference (e.g., -5 instead of 355)
+        float diff = Mathf.DeltaAngle(currentAngle, targetCenterAngle);
+        
+        // Check if we are within half the threshold of the center
+        return Mathf.Abs(diff) <= (successThreshold / 2f);
     }
 }
