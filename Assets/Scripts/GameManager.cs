@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 {
     private bool monitorLocked = false;
 
+    public float distanceLeft = 1000;
+
     private float batteryLevel = 100f;
     private float batteryDrainRate = 0f;
     [SerializeField] TextMeshProUGUI batteryUsageText;
@@ -32,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
     
+    public int intensity = 1;
     
     void Awake()
     {
@@ -49,6 +52,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //distance update
+        distanceLeft -= Time.deltaTime * (1f + intensity * 0.5f);
         
         //battery updates
         if (oxygenOn)
@@ -76,8 +81,8 @@ public class GameManager : MonoBehaviour
             oxygenLevel -= oxygenDrainRate * Time.deltaTime;
         }
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
-        vignette.smoothness.value = (1f - (oxygenLevel / 100f));
-        chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
+        //vignette.smoothness.value = (1f - (oxygenLevel / 100f));
+        //chromaticAberration.intensity.value = (1f - (oxygenLevel / 100f)) * .2f;
     }
 
     public float GetBatteryLevel()
@@ -94,6 +99,11 @@ public class GameManager : MonoBehaviour
     public void SetLocking(bool isLocked)
     {
         monitorLocked = isLocked;
+    }
+
+    public bool GetLocking()
+    {
+        return monitorLocked;
     }
 
     public void switchScreen(int screenNum)
@@ -113,5 +123,11 @@ public class GameManager : MonoBehaviour
     
         oxygenOn = !oxygenOn;
         OxygenIcon.SetActive(oxygenOn);
+    }
+
+    public void SabotageOxygen()
+    {
+        oxygenOn = false;
+        OxygenIcon.SetActive(false);
     }
 }
