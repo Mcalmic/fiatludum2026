@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class ShipController : MonoBehaviour
 {
+    public static ShipController instance;
+
     [SerializeField] private PathDefinition path;
     [SerializeField] private float shipSpeed = 5f;
     [SerializeField] private float waypointReachDistance = 0.5f;
@@ -14,17 +18,40 @@ public class ShipController : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private LineRenderer clickLine;
 
-    private Rigidbody2D rb;
+    [Header("Mode Toggles")]
+    [SerializeField] private bool weaponsEnabled = false;
+    [SerializeField] private bool navigationEnabled = true;
     [SerializeField] private bool autopilotEnabled = false;
+    [SerializeField] private Image weaponsButtonImage;
+    [SerializeField] private Image navigationButtonImage;
+    [SerializeField] private Image autopilotButtonImage;
+    [SerializeField] private Image shieldButtonImage;
+
+
+    [Header("Shield")]
+    [SerializeField] private GameObject shieldObject;
+
+    public bool WeaponsEnabled => weaponsEnabled;
+    public bool NavigationEnabled => navigationEnabled;
+
+    private Rigidbody2D rb;
     private int currentWaypointIndex = 0;
     private Vector2 clickTarget = Vector2.zero;
     private bool hasClickTarget = false;
+    private bool shieldEnabled = false;
 
     private void Awake()
     {
+        instance = this;
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         if (cam == null) cam = Camera.main;
+    }
+
+    private void Start()
+    {
+        if (shieldObject != null) shieldObject.SetActive(false);
+        RefreshModeButtonColors();
     }
 
     private void LateUpdate()
@@ -41,17 +68,62 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    public void EnableAutopilot(bool value)
+    public void ToggleWeapons()
     {
-        autopilotEnabled = value;
+        weaponsEnabled = !weaponsEnabled;
+        navigationEnabled = false;
+        shieldEnabled = false;
+        RefreshModeButtonColors();
+    }
+
+    public void ToggleNavigation()
+    {
+        navigationEnabled = !navigationEnabled;
+        weaponsEnabled = false;
+        autopilotEnabled = false;
+        RefreshModeButtonColors();
+    }
+
+    public void ToggleShield()
+    {
+        shieldEnabled = !shieldEnabled;
+        weaponsEnabled = false;
+        if (shieldObject != null) shieldObject.SetActive(shieldEnabled);
+        if (shieldButtonImage != null)
+            shieldButtonImage.color = shieldEnabled ? Color.green : Color.white;
+        RefreshModeButtonColors();
+    }
+
+    public void ToggleAutopilot()
+    {
+        autopilotEnabled = !autopilotEnabled;
+        navigationEnabled = false;
+        weaponsEnabled = false;
+        shieldEnabled = false;
+        if (shieldObject != null) shieldObject.SetActive(false);
         hasClickTarget = false;
         clickLine.enabled = false;
+        RefreshModeButtonColors();
+    }
+
+    private void RefreshModeButtonColors()
+    {
+        if (weaponsButtonImage != null)
+            weaponsButtonImage.color = weaponsEnabled ? Color.green : Color.white;
+        if (navigationButtonImage != null)
+            navigationButtonImage.color = navigationEnabled ? Color.green : Color.white;
+        if (autopilotButtonImage != null)
+            autopilotButtonImage.color = autopilotEnabled ? Color.green : Color.white;
+        if (shieldButtonImage != null)
+            shieldButtonImage.color = shieldEnabled ? Color.green : Color.white;
     }
 
     public void OnClick(InputValue value)
     {
         if (autopilotEnabled) return;
         if (!value.isPressed) return;
+        if (!navigationEnabled) return;
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         Vector2 screenPos = Mouse.current.position.ReadValue();
         clickTarget = cam.ScreenToWorldPoint(screenPos);

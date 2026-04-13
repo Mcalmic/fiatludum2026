@@ -12,15 +12,15 @@ public class Meteor : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
-    public void Initialize(MeteorSpawner s)
+    public void Initialize(MeteorSpawner s, Vector2 velocity)
     {
         spawner = s;
+        rb.linearVelocity = velocity;
     }
 
     public void Explode()
     {
-        //just now commented this out bc it was causing compiler errors :333
-        //spawner.OnMeteorDestroyed();
+        spawner?.OnMeteorDestroyed(this);
         Destroy(gameObject);
     }
 }
