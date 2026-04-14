@@ -15,13 +15,11 @@ public class Radar : MonoBehaviour
 
     public void RadarGO()
     {
-        //spawn ping at 0 0 
-
         if (gameManager.GetLocking()) return;
+        if (gameManager.GetBatteryLevel() <= 0f) return;
 
         Instantiate(RadarPingPrefab, transform);
         audioManager.PlaySound("radar");
         gameManager.IncreaseBattery(-1f);
-
     }
 }

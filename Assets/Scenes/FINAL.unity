@@ -2632,7 +2632,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1207515204}
         m_TargetAssemblyTypeName: ShipController, Assembly-CSharp
-        m_MethodName: ToggleShield
+        m_MethodName: ToggleAutopilot
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2763,12 +2763,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   monitorOpen: 0
   MonitorPanel: {fileID: 708646675}
+  canvasToHideOnOpen: {fileID: 0}
   distanceLeft: 1000
+  batteryRegenRate: 2
+  shieldDrainRate: 2
+  autopilotDrainRate: 2
   batteryUsageText: {fileID: 441908507}
-  oxygenDrainRate: 0.1
+  oxygenDrainRate: 2
   oxygenRegenRate: 0.2
   oxygenLevel: 100
-  oxygencost: 0.1
+  oxygencost: 1
   OxygenIcon: {fileID: 461177673}
   globalVolume: {fileID: 109171515}
   navPanel: {fileID: 898767763}
@@ -5073,19 +5077,23 @@ MonoBehaviour:
   shipSpeed: 1
   thrustForce: 50
   waypointReachDistance: 0.5
-  autopilotSteerSpeed: 5
+  autopilotSteerSpeed: 2
   manualSteerSpeed: 5
-  meteorDamage: 20
+  driftTorque: 0.3
+  driftChangeInterval: 10
+  maxDriftAngularVelocity: 5
+  meteorDamage: 10
   cam: {fileID: 1437937093}
   clickLine: {fileID: 1207515203}
   weaponsEnabled: 1
   navigationEnabled: 0
-  autopilotEnabled: 1
+  autopilotEnabled: 0
   weaponsButtonImage: {fileID: 0}
   navigationButtonImage: {fileID: 0}
-  autopilotButtonImage: {fileID: 0}
-  shieldButtonImage: {fileID: 0}
+  autopilotButtonImage: {fileID: 714682397}
+  shieldButtonImage: {fileID: 1655561621}
   shieldObject: {fileID: 438758900}
+  shieldEnabled: 0
   uiViewRect: {fileID: 518369155}
 --- !u!50 &1207515205
 Rigidbody2D:
@@ -5101,7 +5109,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 10
   m_LinearDamping: 2
-  m_AngularDamping: 0
+  m_AngularDamping: 2
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -6221,7 +6229,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1655561621}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1207515204}
+        m_TargetAssemblyTypeName: ShipController, Assembly-CSharp
+        m_MethodName: ToggleShield
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1655561621
 MonoBehaviour:
   m_ObjectHideFlags: 0
