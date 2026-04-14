@@ -27,8 +27,8 @@ public class GameProgressManager : MonoBehaviour
         if (GetDistanceToDestination() <= arrivalDistance)
         {
             arrived = true;
-            if (completionScreen != null)
-                completionScreen.SetActive(true);
+            SceneSwitcher.instance.endingType = "good";
+            SceneSwitcher.instance.SwitchToScene("Ending");
         }
     }
 
