@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public bool monitorOpen = false;
 
     [SerializeField] GameObject MonitorPanel;
+    [SerializeField] GameObject canvasToHideOnOpen;
 
     public float distanceLeft = 1000;
 
@@ -80,8 +81,8 @@ public class GameManager : MonoBehaviour
         {
             monitorOpen = !monitorOpen;
             audioManager.PlaySound("click");
-            //set all children of monitor panel to active if monitorOpen is true, otherwise set them to inactive
-            
+            if (canvasToHideOnOpen != null)
+                canvasToHideOnOpen.SetActive(!monitorOpen);
         }
         foreach (Transform child in MonitorPanel.transform)
         {
