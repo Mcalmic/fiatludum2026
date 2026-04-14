@@ -7,9 +7,11 @@ public class SceneSwitcher : MonoBehaviour
 
     public string endingType = "";
 
-    private void Awake()
+    void Start()
     {
         instance = this;
+
+        DontDestroyOnLoad(gameObject);
     }
     
     public void SwitchToScene(string sceneName)
