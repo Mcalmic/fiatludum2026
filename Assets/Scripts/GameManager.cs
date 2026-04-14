@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
 
     private float batteryLevel = 100f;
     private float batteryDrainRate = 0f;
+    [SerializeField] private float batteryRegenRate = 0.5f;
+    [SerializeField] private float shieldDrainRate = 1f;
+    [SerializeField] private float autopilotDrainRate = 1f;
     [SerializeField] TextMeshProUGUI batteryUsageText;
 
     private int screen = 0; //0 = navigation, 1 = map, 2 = medical, 3 = progress
@@ -26,7 +29,7 @@ public class GameManager : MonoBehaviour
     public float oxygenDrainRate = 0.1f;
     public float oxygenRegenRate = 0.2f;
     public float oxygenLevel = 100f;
-    public float oxygencost = 0.1f;
+    public float oxygencost = 1f;
     [SerializeField] GameObject OxygenIcon;
 
     [SerializeField] private Volume globalVolume;
@@ -90,17 +93,24 @@ public class GameManager : MonoBehaviour
         }
         
         //battery updates
-        if (oxygenOn)
-        {
-            batteryDrainRate = oxygencost;
-        }
-        else
-        {
-            batteryDrainRate = 0f;
-        }
+        batteryDrainRate = 0f;
+        if (oxygenOn) batteryDrainRate += oxygencost;
+        if (ShipController.instance != null && ShipController.instance.ShieldEnabled) batteryDrainRate += shieldDrainRate;
+        if (ShipController.instance != null && ShipController.instance.AutopilotEnabled) batteryDrainRate += autopilotDrainRate;
 
+        batteryLevel += batteryRegenRate * Time.deltaTime;
         batteryLevel -= batteryDrainRate * Time.deltaTime;
         batteryLevel = Mathf.Clamp(batteryLevel, 0f, 100f);
+
+        if (batteryLevel <= 0f)
+        {
+            if (oxygenOn) ToggleOxygen();
+            if (ShipController.instance != null)
+            {
+                ShipController.instance.DisableShield();
+                ShipController.instance.DisableAutopilot();
+            }
+        }
         batteryBarTimer -= Time.deltaTime;
         if (batteryBarTimer <= 0f)
         {

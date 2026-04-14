@@ -15,6 +15,14 @@ public class ShipController : MonoBehaviour
     [SerializeField] private float waypointReachDistance = 0.5f;
     [SerializeField] private float autopilotSteerSpeed = 5f;
     [SerializeField] private float manualSteerSpeed = 5f;
+
+    [Header("Drift")]
+    [SerializeField] private float driftTorque = 0.5f;
+    [SerializeField] private float driftChangeInterval = 2f;
+    [SerializeField] private float maxDriftAngularVelocity = 5f;
+
+    private float driftDirection = 0f;
+    private float driftTimer = 0f;
     [SerializeField] private float meteorDamage = 20f;
 
     [Header("Click To Move")]
@@ -37,9 +45,11 @@ public class ShipController : MonoBehaviour
 
     public bool WeaponsEnabled => weaponsEnabled;
     public bool NavigationEnabled => navigationEnabled;
+    public bool ShieldEnabled => shieldEnabled;
+    public bool AutopilotEnabled => autopilotEnabled;
 
     private Rigidbody2D rb;
-    private int currentWaypointIndex = 0;
+    private int currentWaypointIndex = 1;
     private Vector2 clickTarget = Vector2.zero;
     private bool hasClickTarget = false;
     [SerializeField] private bool shieldEnabled = false;
@@ -59,6 +69,8 @@ public class ShipController : MonoBehaviour
 
     private void Start()
     {
+        if (path != null)
+            currentWaypointIndex = Mathf.Min(1, path.GetWaypointCount() - 1);
         if (shieldObject != null) shieldObject.SetActive(false);
         gameManager = GameManager.instance;
         RefreshModeButtonColors();
@@ -97,15 +109,35 @@ public class ShipController : MonoBehaviour
 
     public void ToggleShield()
     {
+        if (!shieldEnabled && GameManager.instance != null && GameManager.instance.GetBatteryLevel() <= 0f) return;
         shieldEnabled = !shieldEnabled;
         //weaponsEnabled = false;
         if (shieldObject != null) shieldObject.SetActive(shieldEnabled);
         RefreshModeButtonColors();
     }
 
+    public void DisableShield()
+    {
+        if (!shieldEnabled) return;
+        shieldEnabled = false;
+        if (shieldObject != null) shieldObject.SetActive(false);
+        RefreshModeButtonColors();
+    }
+
     public void ToggleAutopilot()
     {
+        if (!autopilotEnabled && GameManager.instance != null && GameManager.instance.GetBatteryLevel() <= 0f) return;
         autopilotEnabled = !autopilotEnabled;
+        navigationEnabled = false;
+        hasClickTarget = false;
+        clickLine.enabled = false;
+        RefreshModeButtonColors();
+    }
+
+    public void DisableAutopilot()
+    {
+        if (!autopilotEnabled) return;
+        autopilotEnabled = false;
         navigationEnabled = false;
         hasClickTarget = false;
         clickLine.enabled = false;
@@ -130,7 +162,7 @@ public class ShipController : MonoBehaviour
         {   
             if(collision.gameObject.GetComponent<Meteor>().hasHitPlayer) return;
             collision.gameObject.GetComponent<Meteor>().hasHitPlayer = true;
-            //GameManager.instance?.DrainBattery(meteorDamage);
+            GameManager.instance?.DrainBattery(meteorDamage);
         }
     }
 
@@ -181,6 +213,21 @@ public class ShipController : MonoBehaviour
             FollowPath();
         else
             MoveForward();
+    }
+
+    private void Update()
+    {
+        if (autopilotEnabled) return;
+
+        driftTimer -= Time.deltaTime;
+        if (driftTimer <= 0f)
+        {
+            driftDirection = Random.value < 0.5f ? -1f : 1f;
+            driftTimer = driftChangeInterval;
+        }
+
+        if (Mathf.Abs(rb.angularVelocity) < maxDriftAngularVelocity)
+            rb.AddTorque(driftDirection * driftTorque);
     }
 
     private void MoveForward()
