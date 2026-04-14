@@ -46,6 +46,7 @@ public class ShipController : MonoBehaviour
 
     //STUFF ANDREW ADDED FOR UI TO WORK:
     [SerializeField] private RectTransform uiViewRect;
+    GameManager gameManager;
 
     private void Awake()
     {
@@ -53,11 +54,13 @@ public class ShipController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         if (cam == null) cam = Camera.main;
+        
     }
 
     private void Start()
     {
         if (shieldObject != null) shieldObject.SetActive(false);
+        gameManager = GameManager.instance;
         RefreshModeButtonColors();
     }
 
@@ -127,7 +130,7 @@ public class ShipController : MonoBehaviour
         {   
             if(collision.gameObject.GetComponent<Meteor>().hasHitPlayer) return;
             collision.gameObject.GetComponent<Meteor>().hasHitPlayer = true;
-            GameManager.instance?.DrainBattery(meteorDamage);
+            //GameManager.instance?.DrainBattery(meteorDamage);
         }
     }
 
@@ -142,6 +145,7 @@ public class ShipController : MonoBehaviour
         // hasClickTarget = true;
 
         if (autopilotEnabled) return;
+        if (gameManager.GetLocking()) return;
         if (!value.isPressed) return;
         if (!navigationEnabled) return;
 
