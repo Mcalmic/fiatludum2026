@@ -11,6 +11,8 @@ public class Monster : MonoBehaviour
     public float moveInterval = 5f;
     public float attackInterval = 10f;
 
+    private bool readyToKill = false;
+
     Image monsterImage;
 
     GameManager gameManager;
@@ -36,6 +38,36 @@ public class Monster : MonoBehaviour
 
             }
 
+            if (currentLocation == possiblePoints[6])
+            {
+                int sabotageType = Random.Range(0, 2);
+                if (sabotageType == 0)
+                {
+                    gameManager.SabotageShield();
+                    popUpManager.SpawnShieldStopped();
+                }
+                else
+                {
+                    gameManager.SabotageAutopilot();
+                    popUpManager.SpawnAutoPilotStopped();
+                }
+            }
+
+            if (currentLocation == possiblePoints[0])
+            {
+                if (readyToKill)
+                {
+                    SceneSwitcher.instance.endingType = "monster";
+                    SceneSwitcher.instance.SwitchToScene("Ending");
+
+                }
+                else
+                {
+                    readyToKill = true;
+                }
+
+            }
+
             attackInterval = Random.Range(8f, 12f);
         }
         else
@@ -43,14 +75,17 @@ public class Monster : MonoBehaviour
             attackInterval -= Time.deltaTime;
         }
 
-        if (moveInterval <= 0)
+        if (!readyToKill)
         {
-            UpdateLocation();
-            moveInterval = Random.Range(3f, 7f);
-        }
-        else
-        {
-            moveInterval -= Time.deltaTime;
+            if (moveInterval <= 0)
+            {
+                UpdateLocation();
+                moveInterval = Random.Range(3f, 7f);
+            }
+            else
+            {
+                moveInterval -= Time.deltaTime;
+            }
         }
     }
 

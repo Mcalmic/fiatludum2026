@@ -121,6 +121,12 @@ public class GameManager : MonoBehaviour
         oxygenLevel = Mathf.Clamp(oxygenLevel, 0f, 100f);
         vignette.smoothness.value = Mathf.Clamp(1f - (oxygenLevel / 100f) + .2f, 0f, 1f);
         chromaticAberration.intensity.value = Mathf.Clamp((1f - (oxygenLevel / 100f) + .2f) * .2f, 0f, 1f);
+
+        if (oxygenLevel <= 0f)
+        {
+            SceneSwitcher.instance.endingType = "oxygen";
+            SceneSwitcher.instance.SwitchToScene("Ending");
+        }
     }
 
     public float GetBatteryLevel()
@@ -173,5 +179,15 @@ public class GameManager : MonoBehaviour
     {
         oxygenOn = false;
         OxygenIcon.SetActive(false);
+    }
+
+    public void SabotageShield()
+    {
+        ShipController.instance.ToggleShield();
+    }
+
+    public void SabotageAutopilot()
+    {
+        ShipController.instance.ToggleAutopilot();
     }
 }
