@@ -42,7 +42,7 @@ public class ShipController : MonoBehaviour
     private int currentWaypointIndex = 0;
     private Vector2 clickTarget = Vector2.zero;
     private bool hasClickTarget = false;
-    private bool shieldEnabled = false;
+    [SerializeField] private bool shieldEnabled = false;
 
     //STUFF ANDREW ADDED FOR UI TO WORK:
     [SerializeField] private RectTransform uiViewRect;
@@ -98,7 +98,7 @@ public class ShipController : MonoBehaviour
     public void ToggleShield()
     {
         shieldEnabled = !shieldEnabled;
-        weaponsEnabled = false;
+        //weaponsEnabled = false;
         if (shieldObject != null) shieldObject.SetActive(shieldEnabled);
         RefreshModeButtonColors();
     }
